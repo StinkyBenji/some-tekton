@@ -15,7 +15,7 @@ spec:
     - name: IMAGE
       type: string
       description: The name of the image used to run the task.
-      default: "quay.io/stbenji/semantic-release:latest"
+      default: "registry.access.redhat.com/ubi8/nodejs-18@sha256:d4ef3da5c97ae5f063f604d58ba620350c68c086f7f6d88ec0536a883b2d364f"
     - name: semantic-release-auth
       type: string
       description: name of the secret holding the github token and npm token
@@ -23,6 +23,10 @@ spec:
     - name: source-branch
       type: string
       description: the source-branch that semantic-release will run on
+    - name: extra-args
+      type: string
+      description: extra arguments to be used for semantic-release
+      default: ""
   results:
     - description: The version to be released
       name: version
@@ -54,6 +58,12 @@ spec:
         git fetch origin
         echo "Checkout the $(params.source-branch)"
         git checkout $(params.source-branch)
+        git pull
         # run the semantic-release
-        npx semantic-release --no-ci --branches $(params.source-branch)
-        echo -n "$(cat .VERSION)" | tee $(results.version.path)
+        npx semantic-release --no-ci --branches $(params.source-branch) $(params.extra-args)
+        if test -f ".VERSION"; then
+          echo -n "$(cat .VERSION)" | tee /tekton/results/version
+        else
+          echo "no .VERSION file exists."
+          exit 1
+        fi

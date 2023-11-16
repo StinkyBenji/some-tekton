@@ -15,7 +15,7 @@ spec:
     - name: IMAGE
       type: string
       description: The name of the image used to run the task.
-      default: "registry.access.redhat.com/ubi8/nodejs-18@sha256:d4ef3da5c97ae5f063f604d58ba620350c68c086f7f6d88ec0536a883b2d364f"
+      default: "quay.io/stbenji/semantic-release:latest"
     - name: semantic-release-auth
       type: string
       description: name of the secret holding the github token and npm token
